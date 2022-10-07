@@ -1,0 +1,150 @@
+## **R Libraries: ggplot2**
+
+The R library `ggplot2` is a super useful tool we can use to create visualizations and explore our data.
+
+```{bash}
+install.packages("tidyverse")
+library("tidyverse")
+```
+
+More things we can do to get more information on R and what we're doing:
+
+```{bash}
+help()
+```
+
+We'll need a few more packages for our exploration usage, too. We can install them all at once by using the `c()` function, which creates a list. We'll open these packages with the `library()` function later.
+
+```{bash}
+install.packages(c("nycflights13", "gapminder", "Lahman"))
+```
+
+Built in to our tidyverse are several data sets that we can play around with. In the below code block, we create a variable `myplot` and save the `mpg` database to it.
+
+```{r}
+myplot <- mpg
+myplot
+```
+
+**Something you should be aware of and have open (perhaps on a second monitor, or you can print them out) is the ggplot2 cheat sheet!** <https://github.com/rstudio/cheatsheets/blob/main/data-visualization-2.1.pdf>
+
+```{r}
+#We're saying I want to make a ggplot and I'm going to pass in the mpg dataset
+#for my data. The plus sign means "what are we going to do with it"
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+```{r}
+mtcars
+```
+
+```{r}
+ggplot(data = mpg) + geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+```{r}
+ggplot(data = mpg) + geom_point(mapping = aes(x = displ, y = hwy, color = displ < 5))
+```
+
+```{r}
+#facet wrap says we are going to separate cars by class and split them into
+#2 rows
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = rgb(0.7, 1, 0.3), shape = class)) +
+  facet_wrap(~class, nrow = 2)
+```
+
+```{r}
+#facet grid says we are going to separate car by drv
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+```
+
+```{r}
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv)) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv))
+```
+
+```{r}
+#SE: shaded area
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, linetype = drv)) +
+  geom_point(mapping = aes(color = class)) +
+  geom_smooth(se = FALSE)
+```
+
+```{R}
+#For a bar graph with discrete data, R will automatically make the y axis count
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut))
+```
+
+Whoa, where'd count come from? **Count is not a variable or attribute of the variable diamonds!** Count comes automatically with a lot of graphs as an attribute. You can verify what I'm saying with `?diamonds` in the console.
+
+Any attribute of a data set that is algorithmically calculated is called a *stat*, which is short for a statistical transformation. Many of the **geom** functions have stats built in, and many stats display geoms. For example, the above code block used a geom, but this one uses a stat, and results in an identical chart:
+
+```{r}
+ggplot(data = diamonds) +
+  stat_count(mapping = aes(x = cut))
+```
+
+Let's add color here!
+
+```{r}
+ggplot(data = diamonds) + geom_bar(mapping = aes(x = cut, fill = cut))
+```
+
+What if we add to a different variable than cut?
+
+```{r}
+pie = ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity),
+           position = "fill"
+)+ 
+theme(aspect.ratio = 1) + 
+labs(x = NULL, y = NULL)
+
+pie + coord_polar()
+```
+
+**For your consideration...** Is the above a good graph?
+
+```{r}
+alt- becomes <- (option- on mac)
+```
+
+## Homework
+
+```{r}
+# Find a builtin data set for students to explore; use their cheat sheet from stats to label continuous and discrete data; Use graphs to tell me about 3 datasets
+
+```
+
+```{r}
+ggplot(economics, aes(date, y = unemploy/pop)) +
+  geom_line() +
+  xlab("Date") +
+  ylab("Unemployment Rate")
+```
+Unemployment rates in America have historically gone through patterns of peaks and valleys, however, the unemployment rate has steadily increased since the 1970's.
+
+```{R}
+ggplot(midwest) +
+  geom_smooth(aes(percwhite, percbelowpoverty, color = "White")) +
+  geom_smooth(aes(percblack, percbelowpoverty, color = "Black")) +
+  geom_smooth(aes(percasian, percbelowpoverty, color = "Asian")) +
+  xlab("Percentage of Population by Race") +
+  ylab("Percentage of Population Below Poverty Line")
+```
+In the midwest, there may be a connection between race and poverty. This graph suggests that higher percentages of white and Asian Americans in the population are associated with lower rates of poverty, while a higher percentage of black Americans in the population is associated with higher rates of poverty.
+
+```{R}
+ggplot(msleep, aes(vore, sleep_cycle, fill = vore)) +
+  geom_violin() +
+  xlab("Vore") +
+  ylab("Length of Sleep Cycle (Hours)")
+```
+
+Carnivores and insectivores have characteristic sleep cycle lengths, whereas herbivores and omnivores tend to have more variable sleep cycle lengths. Carnivores have longer sleep cycles than insectivores. 
